@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  pull-requests: read # Дозволяє SonarCloud коментувати PR
+  pull-requests: read
 
 jobs:
   build:
@@ -19,11 +19,11 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: 'zulu' # Java потрібна для SonarScanner
+          distribution: 'zulu'
 
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Важливо для аналізу історії змін
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -34,7 +34,7 @@ jobs:
         run: |
           dotnet tool install --global dotnet-sonarscanner
 
-      # ВИПРАВЛЕНО: Використання нових ключів /k: та /o: для версії сканера 11.0+
+      # ВИПРАВЛЕННЯ 1: Новий формат для SonarScanner (як на скріншоті 3)
       - name: SonarScanner Begin
         shell: pwsh
         run: |
@@ -48,11 +48,12 @@ jobs:
             /d:sonar.exclusions="\*\*/bin/\*\*,\*\*/obj/\*\*,\*\*/sonarcloud.yml" `
             /d:sonar.qualitygate.wait=true
 
+      # ВИПРАВЛЕННЯ 2: Прибрали назву файлу, щоб система знайшла його сама
       - name: Restore
-        run: dotnet restore NetSdrClient.sln
+        run: dotnet restore
 
       - name: Build
-        run: dotnet build NetSdrClient.sln -c Release --no-restore
+        run: dotnet build -c Release --no-restore
 
       - name: SonarScanner End
         shell: pwsh
