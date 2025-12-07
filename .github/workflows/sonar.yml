@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Важливо для точного аналізу
+          fetch-depth: 0  # Вимикає неглибоке клонування для кращого аналізу
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -27,11 +27,12 @@ jobs:
       - name: Download and set up build-wrapper
         run: |
           curl -sSLo build-wrapper.zip "https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip"
-          7z x build-wrapper.zip -o.
+          # Використовуємо Expand-Archive для розпакування (працює на Windows краще за 7z)
+          Expand-Archive -Path build-wrapper.zip -DestinationPath . -Force
 
       - name: Run build-wrapper
         run: |
-          # Ця команда компілює ваш код через обгортку Sonar
+          # Компілюємо файл main.cpp через обгортку SonarCloud
           build-wrapper-win-x86/build-wrapper-win-x86-64.exe --out-dir bw-output g++ main.cpp -o app
 
       - name: SonarCloud Scan
@@ -42,6 +43,6 @@ jobs:
         with:
           args: >
             -Dsonar.cfamily.build-wrapper-output=bw-output
-            -Dsonar.projectKey=ТУТ_ВАШ_PROJECT_KEY_З_SONARCLOUD
-            -Dsonar.organization=ТУТ_ВАША_ОРГАНІЗАЦІЯ_З_SONARCLOUD
+            -Dsonar.projectKey=9244264-prog_Lab
+            -Dsonar.organization=9244264-prog
             -Dsonar.sources=.
