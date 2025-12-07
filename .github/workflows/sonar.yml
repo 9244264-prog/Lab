@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Вимикає неглибоке клонування для кращого аналізу
+          fetch-depth: 0 
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -27,12 +27,12 @@ jobs:
       - name: Download and set up build-wrapper
         run: |
           curl -sSLo build-wrapper.zip "https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip"
-          # Використовуємо Expand-Archive для розпакування (працює на Windows краще за 7z)
+          # ВИПРАВЛЕННЯ: Використовуємо Expand-Archive замість 7z, щоб не було помилки "Too short switch"
           Expand-Archive -Path build-wrapper.zip -DestinationPath . -Force
 
       - name: Run build-wrapper
         run: |
-          # Компілюємо файл main.cpp через обгортку SonarCloud
+          # Ця команда шукає main.cpp. Якщо файлу немає - буде помилка.
           build-wrapper-win-x86/build-wrapper-win-x86-64.exe --out-dir bw-output g++ main.cpp -o app
 
       - name: SonarCloud Scan
