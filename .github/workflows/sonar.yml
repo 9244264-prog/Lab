@@ -34,13 +34,13 @@ jobs:
         run: |
           dotnet tool install --global dotnet-sonarscanner
 
-      # 1) Початок сканування (Твої дані вже вставлені нижче)
+      # ВИПРАВЛЕНО: Використання нових ключів /k: та /o: для версії сканера 11.0+
       - name: SonarScanner Begin
         shell: pwsh
         run: |
           dotnet sonarscanner begin `
-            /d:sonar.projectKey="9244264-prog_Lab" `
-            /d:sonar.organization="9244264-prog" `
+            /k:"9244264-prog_Lab" `
+            /o:"9244264-prog" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.cs.opencover.reportsPaths="\*\*/coverage.xml" `
             /d:sonar.cpd.cs.minimumTokens=40 `
@@ -48,14 +48,12 @@ jobs:
             /d:sonar.exclusions="\*\*/bin/\*\*,\*\*/obj/\*\*,\*\*/sonarcloud.yml" `
             /d:sonar.qualitygate.wait=true
 
-      # 2) Збірка проекту
       - name: Restore
         run: dotnet restore NetSdrClient.sln
 
       - name: Build
         run: dotnet build NetSdrClient.sln -c Release --no-restore
 
-      # 3) Кінець сканування
       - name: SonarScanner End
         shell: pwsh
         env:
