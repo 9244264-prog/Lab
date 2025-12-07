@@ -34,7 +34,10 @@ jobs:
         run: |
           dotnet tool install --global dotnet-sonarscanner
 
-      # ВИПРАВЛЕННЯ 1: Новий формат для SonarScanner (як на скріншоті 3)
+      # Крок для налагодження: покаже, які файли реально є у папці
+      - name: List files (Debug)
+        run: ls -R
+
       - name: SonarScanner Begin
         shell: pwsh
         run: |
@@ -48,12 +51,13 @@ jobs:
             /d:sonar.exclusions="\*\*/bin/\*\*,\*\*/obj/\*\*,\*\*/sonarcloud.yml" `
             /d:sonar.qualitygate.wait=true
 
-      # ВИПРАВЛЕННЯ 2: Прибрали назву файлу, щоб система знайшла його сама
+      # ВИПРАВЛЕННЯ: Шукаємо будь-який .sln файл у підпапках
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore **/*.sln
 
+      # Тут теж вказуємо пошук файлу
       - name: Build
-        run: dotnet build -c Release --no-restore
+        run: dotnet build **/*.sln -c Release --no-restore
 
       - name: SonarScanner End
         shell: pwsh
